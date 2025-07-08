@@ -1,61 +1,131 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Parking Lot API System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Overview
+This project is a Laravel-based API for automated parking lot management. It supports vehicle parking, unparking, and real-time capacity monitoring, applying business and spacing rules for weekdays and weekends. The API is designed for integration with automated camera systems and real-time display screens.
 
-## About Laravel
+## Features
+- Park a vehicle with spacing rules (weekday/weekend)
+- Unpark a vehicle
+- Get available parking spots in real time
+- Input validation and business rule enforcement
+- PostgreSQL database support
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Requirements
+- PHP 8.1+
+- Composer
+- PostgreSQL
+- (Optional) Postman or similar API client for testing
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Setup Instructions
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+1. **Clone the repository**
+   ```sh
+   git clone <your-repo-url>
+   cd Parking-Lot-API-System
+   ```
 
-## Learning Laravel
+2. **Install dependencies**
+   ```sh
+   composer install
+   ```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+3. **Configure environment**
+   - Copy `.env.example` to `.env` and update database settings for PostgreSQL:
+     ```env
+     DB_CONNECTION=pgsql
+     DB_HOST=127.0.0.1
+     DB_PORT=5432
+     DB_DATABASE=parking_lot
+     DB_USERNAME=your_postgres_user
+     DB_PASSWORD=your_postgres_password
+     ```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+4. **Generate application key**
+   ```sh
+   php artisan key:generate
+   ```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+5. **Create the database**
+   - In PostgreSQL, create a database named `parking_lot`.
 
-## Laravel Sponsors
+6. **Run migrations**
+   ```sh
+   php artisan migrate
+   ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+7. **Start the server**
+   ```sh
+   php artisan serve
+   ```
+   The API will be available at `http://localhost:8000/api`.
 
-### Premium Partners
+## API Endpoints
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 1. Park Vehicle
+- **POST** `/api/park`
+- **Body (JSON):**
+  ```json
+  {
+    "license_plate": "ABC1234",
+    "timestamp": "2025-07-12T10:00:00Z"
+  }
+  ```
+- **Response:**
+  - `201 Created` on success
+  - `409 Conflict` if already parked or no space
+  - `422 Unprocessable Entity` for validation errors
 
-## Contributing
+### 2. Unpark Vehicle
+- **POST** `/api/unpark`
+- **Body (JSON):**
+  ```json
+  {
+    "license_plate": "ABC1234",
+    "timestamp": "2025-07-12T12:00:00Z"
+  }
+  ```
+- **Response:**
+  - `200 OK` on success
+  - `404 Not Found` if vehicle not found
+  - `422 Unprocessable Entity` for validation errors
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 3. Get Available Spots
+- **GET** `/api/available-spots`
+- **Response:**
+  ```json
+  {
+    "available_spots": 97
+  }
+  ```
 
-## Code of Conduct
+## Testing the Endpoints
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+You can use [Postman](https://www.postman.com/) or `curl` to test the API:
 
-## Security Vulnerabilities
+### Example: Park a Vehicle (Saturday)
+```sh
+curl -X POST http://localhost:8000/api/park \
+  -H "Content-Type: application/json" \
+  -d '{"license_plate": "SAT1234", "timestamp": "2025-07-12T10:00:00Z"}'
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Example: Unpark a Vehicle
+```sh
+curl -X POST http://localhost:8000/api/unpark \
+  -H "Content-Type: application/json" \
+  -d '{"license_plate": "SAT1234", "timestamp": "2025-07-12T12:00:00Z"}'
+```
 
-## License
+### Example: Get Available Spots
+```sh
+curl http://localhost:8000/api/available-spots
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Notes
+- All timestamps must be in UTC (ISO 8601 format recommended).
+- Spacing rules are applied automatically based on the day of the week.
+- The system enforces all business rules as described in the project requirements.
+
+---
+
+Feel free to reach out if you have any questions or need further assistance.
