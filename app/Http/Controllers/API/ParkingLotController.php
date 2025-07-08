@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\ParkingLotService;
+use App\Helpers\ApiResponse;
 
 class ParkingLotController extends Controller
 {
@@ -17,16 +18,19 @@ class ParkingLotController extends Controller
 
     public function park(Request $request)
     {
-        return $this->parkingLotService->park($request);
+        $result = $this->parkingLotService->park($request);
+        return ApiResponse::respond($result['status'], $result['data'] ?? [], $result['errors'] ?? []);
     }
 
     public function unpark(Request $request)
     {
-        return $this->parkingLotService->unpark($request);
+        $result = $this->parkingLotService->unpark($request);
+        return ApiResponse::respond($result['status'], $result['data'] ?? [], $result['errors'] ?? []);
     }
 
     public function availableSpots()
     {
-        return $this->parkingLotService->availableSpots();
+        $result = $this->parkingLotService->availableSpots();
+        return ApiResponse::respond($result['status'], $result['data'] ?? []);
     }
-} 
+}

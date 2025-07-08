@@ -126,6 +126,25 @@ curl http://localhost:8000/api/available-spots
 - Spacing rules are applied automatically based on the day of the week.
 - The system enforces all business rules as described in the project requirements.
 
+## Design Decisions: Single Service and Controller
+
+This project uses a single service class (`ParkingLotService`) and a single controller (`ParkingLotController`) to handle all parking lot operations (park, unpark, and available spots). This approach was chosen because:
+- All business logic is closely related and focused on the parking lot domain.
+- The actions share common rules (spacing, capacity, validation) and data models.
+- It keeps the codebase simple, easy to follow, and maintainable for a project of this size and scope.
+
+**When to use a single service/controller:**
+- When all actions are tightly related and share business rules.
+- When the project is small to medium in size.
+- When you want to minimize boilerplate and keep logic centralized.
+
+**When to separate services/controllers:**
+- If each action (e.g., parking, unparking, reporting) becomes complex or grows independently.
+- In large projects where different teams or modules own different features.
+- When following strict Domain-Driven Design (DDD) or microservices principles.
+
+This design keeps the project clean and maintainable, while allowing for easy refactoring if the system grows in complexity.
+
 ---
 
 Feel free to reach out if you have any questions or need further assistance.
