@@ -4,12 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ParkedVehicle extends Model
+class Vehicle extends Model
 {
     protected $fillable = [
-        'vehicle_identifier',
+        'license_plate',
         'parked_at',
-        'unparked_at',
-        'spots_occupied',
     ];
-}
+    public $timestamps = false;
+} 
